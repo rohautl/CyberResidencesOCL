@@ -50,10 +50,92 @@ end
 
 class Bathroom < Room
 attributes
-    isOnTheLanding : Boolean
+    isOnTheLanding : Boolean -- @derived
 end
 
 -- TODO
+-------------
+
+class Bedroom < Room
+attributes
+	nbOfSingleBeds :Integer
+	nbOfDoubleBeds : Integer
+	rate : Real
+	isNomSmoking : Boolean
+	nbOfUnits : Integer -- @derived
+end
+
+class Rent
+between
+	Bedroom[1..*] role rentedBedrooms
+	Tenant[0..1] role tenant
+attributes
+	discount : Real -- @derived
+	rate : Real -- @derived
+end
+
+class Discount
+attributes	
+	percentage : Integer
+	label : String
+end
+
+class Tenant
+attribute
+	paidRate : Real -- @derived
+end
+
+class Resident < Tenant
+attribute
+	isSmoker : Boolean
+end
+
+class Person < Resident
+attributes
+	name : String
+	age : Integer
+	gender : Gender
+end
+
+association IsInBedroom
+between
+	Bathroom[0..3] role bathrooms
+	Bedroom[0..1] role bedroom
+end
+
+association occupiedRoom
+between
+	Bedroom[1] role IsOccupiedBy
+	Resident[*] role occupants
+end
+
+association IsMarriedWith
+between	
+	Resident[0..1] role consort
+	Resident[0..1]
+end
+
+association IsTutoredBy
+between	
+	Resident[0..2] role tutors
+	Resident[*] role tutored
+end
+
+association ContainsRooms
+between
+	Residence[1] role residence
+	Room[*] role rooms
+end
+
+association HasDiscounts
+between	
+	Rent[1] role rent
+	Discount[*] role discounts
+end
+
+
+
+-------------
 
 -- For association classes use the following syntax
 -- (see documentation for more details)
@@ -78,6 +160,7 @@ constraints
     -- order. The label of this type of discount is 'BROOO50'. This
     -- rule does not apply in economy residences.
 
+	
 
 -------------------------------------------------------------------------------
 --                               aboooPercentage
@@ -95,9 +178,10 @@ constraints
 -- Only adult married.
 -- Easy. Use 'implies'
 
--- context Resident inv adultMarried:
+context Resident inv adultMarried:
     -- To be registered as married, resident must be adult.
 
+	oclIsTypeOf(IsMarriedWith) implies self.age >= 18
 
 -------------------------------------------------------------------------------
 --                                 adultTenant
@@ -105,9 +189,10 @@ constraints
 -- Tenants are adults.
 -- Easy
 
--- context Tenant inv adultTenant:
+context Tenant inv adultTenant:
     -- The minimal age to rent a bedroom is 18 years old.
 
+	self.age >= 18 
 
 -------------------------------------------------------------------------------
 --                             allPrestigeBathrooms
@@ -126,19 +211,21 @@ constraints
 -- At least one bed for useful bedrooms.
 -- Easy. Use implies.
 
--- context Bedroom inv atLeastABed:
+context Bedroom inv atLeastABed:
     -- Bedrooms that are not out of order must have at least one bed.
 
-
+	not isOutOfOrder implies nbOfSingleBeds > 0 or nbOfDoubleBeds > 0	
+	
 -------------------------------------------------------------------------------
 --                               atLeastOneAdult
 -------------------------------------------------------------------------------
 -- At least one adult per room.
 -- Easy. Use 'implies'
 
--- context Bedroom inv atLeastOneAdult:
+context Bedroom inv atLeastOneAdult:
     -- At least one adult must be presented in all occupied rooms.
 
+		self.isOccupiedBy -> exists(e:Person|e.age >= 18)
 
 -------------------------------------------------------------------------------
 --                               childNonSmoking
@@ -147,9 +234,10 @@ constraints
 -- Easy
 
 
--- context Resident inv childNonSmoking:
+context Resident inv childNonSmoking:
     -- Children are always declared as non smoker.
 
+	self.age < 18 implies isSmoker = 0
 
 -------------------------------------------------------------------------------
 --                                 childTutored
@@ -169,10 +257,11 @@ constraints
 -- Limit of cumulated discounts.
 -- Easy. Use 'sum'
 
--- context Rent inv cumulatedDiscounts:
+context Rent inv cumulatedDiscounts:
     -- No room will have more that 70% of dicounts cumulated.
 
-
+	self.number : sum(self.percentage) < 70
+	
 -------------------------------------------------------------------------------
 --                                deriveAvgRate
 -------------------------------------------------------------------------------
