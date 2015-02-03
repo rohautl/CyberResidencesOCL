@@ -19,25 +19,6 @@ enum Gender {
 }
 
 
-class Residence
-attributes
-    name     : String
-    floorMin : Integer
-    floorMax : Integer
-    category : Category
-    maxNbOfFreeUnits : Integer -- @derived
-    avgRate : Real             -- @derived
-operations
-    -- Set of bedrooms of the residence.
-    bedrooms() : Set(Bedroom) =
-        rooms->select(oclIsKindOf(Bedroom))->oclAsType(Set(Bedroom))
-    -- Set of useful bedrooms.
-    usefulBedrooms() : Set(Bedroom)
-        bedrooms()->select(not isOutOfOrder)
-    -- Set of residence bathrooms
-    bathrooms() : Set(Bathroom)
-        rooms->select(oclIsKindOf(Bathroom))->oclAsType(Set(Bathroom))
-end
 
 
 class Room
@@ -53,16 +34,100 @@ attributes
     isOnTheLanding : Boolean
 end
 
--- TODO
+class Bedroom < Room
+attributes
+	nbOfSingleBeds : Integer
+	nbOfDoubleBeds : Integer
+	rate : Real
+	isNonSmoking : Boolean
+	nbOfUnits : Integer -- @derived
+end
 
--- For association classes use the following syntax
--- (see documentation for more details)
--- associationclass ... between
---     ...[...] role ...
---     ...[...] role ...
--- attributes
---     ...
--- end
+class Person
+attributes
+	name : String
+	age : Integer
+	gender : Gender
+end
+
+class Resident < Person
+attributes
+	isSmoker : Boolean
+end
+
+class Tenant < Resident
+attributes
+	PaidRate : Real -- @derived
+end
+
+class Discount
+attributes
+	percentage : Integer
+	label : String
+end
+
+class Rent
+attributes
+	discount : Real -- @derived
+	rate : Real -- @derived
+end
+
+
+class Residence
+attributes
+    name     : String
+    floorMin : Integer
+    floorMax : Integer
+    category : Category
+    maxNbOfFreeUnits : Integer -- @derived
+    avgRate : Real             -- @derived
+operations
+    -- Set of bedrooms of the residence.
+    bedrooms() : Set(Bedroom) =
+        rooms->select(oclIsKindOf(Bedroom))->oclAsType(Set(Bedroom))
+    -- Set of useful bedrooms.
+    usefulBedrooms() : Set(Bedroom) =
+        bedrooms()->select(not isOutOfOrder)
+    -- Set of residence bathrooms
+    bathrooms() : Set(Bathroom) =
+        rooms->select(oclIsKindOf(Bathroom))->oclAsType(Set(Bathroom))
+end
+
+
+association IsInBedroom between
+  Bathroom[0..3] role bathrooms
+  Bedroom[0..1] role bedroom
+end
+
+association ContainsRooms between
+	Room[*] role rooms
+	Residence[1] role residence
+end
+
+association HasDiscounts between
+	Discount[*] role discounts
+	Rent[1] role rent
+end
+
+association rentedBedrooms between
+	Tenant[0..1] role tenant
+	Bedroom[1..*] role rentedBedrooms
+end
+
+association occupiedRoom between
+	Resident[*] role occupants
+	Bedroom[1] role IsOccupiedBy
+end
+
+association IsTutoredBy between
+	Resident[*] role tutored
+	Resident[0..2] role tutors
+end
+
+association IsMarriedWith between
+	Resident[0..1] role consort
+	Resident[0..1] role consorted
+end
 
 
 constraints
@@ -95,7 +160,8 @@ constraints
 -- Only adult married.
 -- Easy. Use 'implies'
 
--- context Resident inv adultMarried:
+context Resident inv adultMarried:
+	self.consort->size() > 0 implies self.age >= 18
     -- To be registered as married, resident must be adult.
 
 
@@ -105,7 +171,8 @@ constraints
 -- Tenants are adults.
 -- Easy
 
--- context Tenant inv adultTenant:
+context Tenant inv adultTenant:
+	self.age >= 18
     -- The minimal age to rent a bedroom is 18 years old.
 
 
@@ -126,7 +193,8 @@ constraints
 -- At least one bed for useful bedrooms.
 -- Easy. Use implies.
 
--- context Bedroom inv atLeastABed:
+context Bedroom inv atLeastABed:
+	not self.isOutOfOrder implies self.nbOfSingleBeds > 0 or self.nbOfDoubleBeds > 0
     -- Bedrooms that are not out of order must have at least one bed.
 
 
@@ -136,7 +204,8 @@ constraints
 -- At least one adult per room.
 -- Easy. Use 'implies'
 
--- context Bedroom inv atLeastOneAdult:
+context Bedroom inv atLeastOneAdult:
+	self.occupants->size() > 0 implies self.occupants->select(age >= 18)->notEmpty()
     -- At least one adult must be presented in all occupied rooms.
 
 
@@ -147,7 +216,8 @@ constraints
 -- Easy
 
 
--- context Resident inv childNonSmoking:
+context Resident inv childNonSmoking:
+	self.age < 18 implies not isSmoker
     -- Children are always declared as non smoker.
 
 
@@ -202,7 +272,8 @@ constraints
 -- Derivation of the attribute floor.
 -- Easy
 
--- context Room inv deriveFloor:
+--context Room inv deriveFloor:
+
     -- The floor number correspond to the first digits of the room
     -- number, where the last two digits are removed. For instance the
     -- room 634 is at the floor 6.
@@ -214,7 +285,8 @@ constraints
 -- Derivation of isOnTheLanding attribute.
 -- Easy
 
--- context Bathroom inv deriveIsOnTheLanding:
+context Bathroom inv deriveIsOnTheLanding:
+	self.isOnTheLanding implies self.bedroom->size() = 0
     -- A bathroom is said to be on the landing if it is not in a
     -- bedroom.
 
@@ -225,7 +297,8 @@ constraints
 -- Derivation of maxNbOfFreeUnits attribute.
 -- Easy
 
--- context Residence inv deriveMaxNbOfFreeUnits:
+context Residence inv deriveMaxNbOfFreeUnits:
+	self.maxNbOfFreeUnits = self.bedrooms()->select(nbOfSingleBeds > 0)->size() + (self.bedrooms()->select(nbOfDoubleBeds > 0)->size() * 2)
     -- The maximum number of free units is equal to the maximum number
     -- of places in beds of all rooms of the residence.
 
@@ -236,8 +309,8 @@ constraints
 -- Derivation of nbOfUnits attribute.
 -- Easy
 
--- context Bedroom inv deriveNbOfUnits:
-    -- The number of units of a bedroom is the maximum number of
+context Bedroom inv deriveNbOfUnits:
+	self.nbOfUnits = self.nbOfSingleBeds + self.nbOfDoubleBeds * 2
     -- people that can fit within the bedroom assuming that all places
     -- in all beds are full.
 
@@ -252,7 +325,7 @@ constraints
 -- context Tenant inv derivePaidRate:
     -- The total amount paid by a tenant is the sum of rent rates for
     -- all bedrooms rented. If the members of his or her group is
-    -- spread over more than one floor, then 20€ of reduction will
+    -- spread over more than one floor, then 20â‚¬ of reduction will
     -- automatically be deduced.
 
 
@@ -273,8 +346,9 @@ constraints
 -- Domain of percentage attribute.
 -- Easy
 
--- context Discount inv domainPercentage:
-    -- The percentage is a value between 1 and 100.
+context Discount inv domainPercentage:
+	self.percentage <= 100 and self.percentage >= 1
+-- The percentage is a value between 1 and 100.
 
 
 -------------------------------------------------------------------------------
@@ -283,7 +357,8 @@ constraints
 -- At least as many bathrooms than beds for prestige residence.
 -- Easy. Use implies.
 
--- context Bedroom inv enoughBathroomsInPrestige:
+context Bedroom inv enoughBathroomsInPrestige:
+	self.residence.category = Category::prestige implies self.bathrooms->size() = self.nbOfSingleBeds + self.nbOfDoubleBeds
     -- In a prestige residence, the number of private bathrooms is at
     -- least the same as the number of beds in each bedroom.
 
@@ -294,7 +369,9 @@ constraints
 -- Floor between minimum and maximum floors.
 -- Easy
 
--- context Room inv floorBetweenMinAndMax:
+context Room inv floorBetweenMinAndMax:
+    self.floor <= self.residence.floorMax and self.floor >= self.residence.floorMin
+    
     -- The floor of a room is between the minium and maximum floor of
     -- the residence.
 
@@ -305,8 +382,9 @@ constraints
 -- Order between floorMin and floorMax attributes.
 -- Easy
 
--- context Residence inv floorOrder:
-    -- The maximum floor is at higher or at the same level that the
+context Residence inv floorOrder:
+	self.floorMax >= self.floorMin
+-- The maximum floor is at higher or at the same level that the
     -- minimum floor of the residence.
 
 
@@ -326,7 +404,8 @@ constraints
 -- Anti-reflexivity of marriage relationship.
 -- Easy
 
--- context Resident inv marriageAntiReflexivity:
+context Resident inv marriageAntiReflexivity:
+	self.consort->size() > 0 implies self.consort <> self
     -- A resident cannot mary with himself or herself.
 
 
@@ -347,7 +426,8 @@ constraints
 -- Symmetry of marriage relationship.
 -- Easy
 
--- context Resident inv marriageSymmetry:
+context Resident inv marriageSymmetry:
+	self.consort->size() > 0 implies self.consort.consort = self
     -- If a resident is declared to be the consort of another
     -- resident, then the opposite is true as well.
 
@@ -370,7 +450,8 @@ constraints
 -- Rented bedrooms not empty.
 -- Easy. Use 'implies'
 
--- context Bedroom inv noEmptyRentedBedrooms:
+context Bedroom inv noEmptyRentedBedrooms:
+	self.tenant->size() > 0 implies self.occupants->size() > 0
     -- All rented bedrooms are occupied by at least one occupant.
 
 
@@ -380,8 +461,11 @@ constraints
 -- Nobody in rooms not rented.
 -- Easy. Use 'implies'
 
--- context Bedroom inv noSquaters:
-    -- Occupants must be exclusively in rooms that are rented by
+context Bedroom inv noSquaters:
+		self.occupants->size() > 0 implies self.tenant->size() > 0  
+
+
+-- Occupants must be exclusively in rooms that are rented by
     -- somebody.
 
 
@@ -391,7 +475,8 @@ constraints
 -- No tutor for adults.
 -- Easy
 
--- context Resident inv noTutorForAdults:
+context Resident inv noTutorForAdults:
+	self.age >= 18 implies self.tutors->size() = 0
     -- Adults never have tutor.
 
 
@@ -401,7 +486,8 @@ constraints
 -- No rental of Out Of Order bedrooms.
 -- Easy
 
--- context Bedroom inv oooBedroomsNotRented:
+context Bedroom inv oooBedroomsNotRented:
+	self.isOutOfOrder implies self.occupants->size() = 0
     -- Bedrooms that are out of order cannot be rented.
 
 
@@ -435,7 +521,8 @@ constraints
 -- Same number if private.
 -- Easy. Use 'implies'.
 
--- context Bathroom inv sameNumberIfPrivate:
+context Bathroom inv sameNumberIfPrivate:
+	not self.isOnTheLanding implies self.number = self.bedroom.number
     -- All bathrooms that are not on the landing, that is that are
     -- private to a bedroom, have the same number of room as this
     -- bedroom.
@@ -528,4 +615,3 @@ constraints
 
 -- context Residence inv uniqueNumberApartForPrivateBathroom:
     -- All rooms have a distinct number, except private bathrooms.
-
