@@ -5,3 +5,21 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_r3 : Residence
+! set G299_r3.name:='sud'
+! set G299_r3.floorMin:=1
+! set G299_r3.floorMax:=3
+! set G299_r3.category:=#economy
+! set G299_r3.maxNbOfFreeUnits:=5
+! set G299_r3.avgRate:=2
+
+! create G299_r3_201 : Bedroom
+! set G299_r3_201.number:=201
+! set G299_r3_201.floor:=2
+! set G299_r3_201.isOutOfOrder:=false
+! set G299_r3_201.nbOfSingleBeds:=2
+! set G299_r3_201.nbOfDoubleBeds:=0
+! set G299_r3_201.rate:=20
+! set G299_r3_201.isNonSmoking:=false
+! set G299_r3_201.nbOfUnits:=2
