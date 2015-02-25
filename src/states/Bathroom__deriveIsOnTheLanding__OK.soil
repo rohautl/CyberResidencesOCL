@@ -5,3 +5,9 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_r1_203 : Bathroom
+! set G299_r1_203.number:=203
+! set G299_r1_203.floor:=2
+! set G299_r1_203.isOutOfOrder:=false
+! set G299_r1_203.isOnTheLanding:=true
