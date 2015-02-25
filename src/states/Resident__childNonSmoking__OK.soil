@@ -5,3 +5,9 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_nonsmoky : Resident
+! set G299_nonsmoky.name:='Nonsmoky Mc smoke'
+! set G299_nonsmoky.age:=15
+! set G299_nonsmoky.gender:=#male
+! set G299_nonsmoky.isSmoker:=false
