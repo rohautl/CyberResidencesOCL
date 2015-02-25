@@ -158,8 +158,9 @@ context Rent inv aboooConditions:
     -- order. The label of this type of discount is 'BROOO50'. This
     -- rule does not apply in economy residences.
 
-	if self.rentedBedrooms.bathrooms->one(isOutOfOrder = false) or self.rentedBedrooms.residence.category <> Category::economy then
-		true else self.discounts->one(label='BROOO50')
+	if self.rentedBedrooms.residence.category = Category::economy then true else
+		if self.rentedBedrooms.bathrooms->forAll(b : Bathroom | b.isOutOfOrder = true) then
+		self.discounts->one(label='BROOO50') else true endif
 	endif
 
 -------------------------------------------------------------------------------
@@ -227,7 +228,7 @@ context Bedroom inv atLeastABed:
 context Bedroom inv atLeastOneAdult:
     -- At least one adult must be presented in all occupied rooms.
 
-		self.occupants -> exists(e:Person|e.age >= 18)
+		self.occupants->notEmpty() implies self.occupants -> exists(e:Person|e.age >= 18)
 
 -------------------------------------------------------------------------------
 --                               childNonSmoking
@@ -289,7 +290,7 @@ context Rent inv deriveDiscount:
     -- The discount for a rent, is the rate of the bedroom multiplied
     -- by the sum of percentages of all discounts.
 
-	self.discount=self.rentedBedrooms.rate*self.discounts.percentage->sum()
+	self.discount=self.rentedBedrooms.rate*self.discounts.percentage->sum()/100
 	
 -------------------------------------------------------------------------------
 --                                 deriveFloor
@@ -683,5 +684,5 @@ context Resident inv tutorInSameGroup:
 context Residence inv uniqueNumberApartForPrivateBathroom:
     -- All rooms have a distinct number, except private bathrooms.
 
-	self.rooms->forAll(e1,e2 : Room | e1<>e2 implies e1.number <> e2.number) or
-		self.oclIsKindOf(Bathroom)
+	self.rooms->forAll(e1,e2 : Room | (e1<>e2 implies e1.number <> e2.number) or
+		e1.oclIsKindOf(Bathroom) or e2.oclIsKindOf(Bathroom) )
