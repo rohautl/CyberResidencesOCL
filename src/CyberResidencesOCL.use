@@ -114,9 +114,9 @@ association rentedBedrooms between
 	Bedroom[1..*] role rentedBedrooms
 end
 
-association occupiedRoom between
+association IsOccupiedBy between
 	Resident[*] role occupants
-	Bedroom[1] role IsOccupiedBy
+	Bedroom[1] role occupiedRoom
 end
 
 association IsTutoredBy between
@@ -325,7 +325,7 @@ context Bedroom inv deriveNbOfUnits:
 -- context Tenant inv derivePaidRate:
     -- The total amount paid by a tenant is the sum of rent rates for
     -- all bedrooms rented. If the members of his or her group is
-    -- spread over more than one floor, then 20â‚¬ of reduction will
+    -- spread over more than one floor, then 20€ of reduction will
     -- automatically be deduced.
 
 
@@ -497,12 +497,13 @@ context Bedroom inv oooBedroomsNotRented:
 -- Out of order bathroom implications if prestige. 
 -- Medium. Use 'implies'
 
--- context Bathroom inv oooIfPrestige:
+context Bathroom inv oooIfPrestige:
+	self.isOutOfOrder and self.residence.category = Category::prestige implies self.bedroom.isOutOfOrder 
     -- In prestige residences, it is not acceptable to rent bedrooms
     -- with bathrooms that are out of order. So if a bathrom is marked
     -- as out of order, the corresponding bedroom is also marked as
     -- out of order.
-
+	
 
 -------------------------------------------------------------------------------
 --                              rentInOneResidence
@@ -511,6 +512,7 @@ context Bedroom inv oooBedroomsNotRented:
 -- <Enter note text here>
 
 -- context Tenant inv rentInOneResidence:
+	
     -- For a given tenant, all rented bedrooms are in the same
     -- residence.
 
@@ -559,7 +561,8 @@ context Bathroom inv sameNumberIfPrivate:
 -- Smoking policy for premium residences.
 -- Not easy
 
--- context Bedroom inv smokingPremiumPolicy:
+context Bedroom inv smokingPremiumPolicy:
+	self.occupants->select(r : Resident | not r.isSmoker)->size() > 0 and self.residence.category = Category::prestige implies self.isNonSmoking
     -- In a premium residence a resident that specified that he or she
     -- is non smoker will never ever be place in a smoking room.
 
@@ -570,7 +573,8 @@ context Bathroom inv sameNumberIfPrivate:
 -- No smoking is prestige.
 -- Easy
 
--- context Bedroom inv smokingPrestigePolicy:
+context Bedroom inv smokingPrestigePolicy:
+	self.residence.category = Category::prestige implies self.isNonSmoking
     -- There are no smoking rooms at all in residence of prestige.
 
 
@@ -580,7 +584,8 @@ context Bathroom inv sameNumberIfPrivate:
 -- Room occupied by the tenant.
 -- Medium. 
 
--- context Tenant inv tenantInRentedRoom:
+context Tenant inv tenantInRentedRoom:
+	self.occupiedRoom.tenant = self
     -- A tenant occupies one of the bedroom that he or she has rented.
 
 
@@ -590,7 +595,8 @@ context Bathroom inv sameNumberIfPrivate:
 -- Tutors are adults.
 -- Easy
 
--- context Resident inv tutorAdult:
+context Resident inv tutorAdult:
+	self.tutored->size() > 0 implies self.age >= 18
     -- A resident can not be the tutor of another resident if he or
     -- she is not an adult.
 
@@ -601,7 +607,8 @@ context Bathroom inv sameNumberIfPrivate:
 -- Tutors and tutored in one group.
 -- Medium
 
--- context Resident inv tutorInSameGroup:
+--context Resident inv tutorInSameGroup:
+	--self.tutors->forall(res : Resident | res.occupiedRoom.residence = self.occupiedRoom.residence )
     -- The tutors of a resident are in the same group that this
     -- resident. In other words they are all in the same group of
     -- rooms.
@@ -613,5 +620,7 @@ context Bathroom inv sameNumberIfPrivate:
 -- Invariant on room numbering.
 -- Medium
 
--- context Residence inv uniqueNumberApartForPrivateBathroom:
+context Residence inv uniqueNumberApartForPrivateBathroom:
+	self.bedrooms()->isUnique(number) and self.bathrooms()->select(r : Bathroom | r.isOnTheLanding)->isUnique(number)
     -- All rooms have a distinct number, except private bathrooms.
+
