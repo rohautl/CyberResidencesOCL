@@ -7,7 +7,7 @@
 -- here some mutation code
 
 ! create G299_smoky : Resident
-! set G299_smoky.name:='Smoky Mc'smoke'
+! set G299_smoky.name:='Smoky Mc smoke'
 ! set G299_smoky.age:=15
 ! set G299_smoky.gender:=#male
 ! set G299_smoky.isSmoker:=true
