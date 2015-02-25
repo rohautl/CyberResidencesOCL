@@ -100,8 +100,8 @@ association IsInBedroom between
 end
 
 association ContainsRooms between
-	Room[*] role rooms
 	Residence[1] role residence
+	Room[*] role rooms
 end
 
 association HasDiscounts between
