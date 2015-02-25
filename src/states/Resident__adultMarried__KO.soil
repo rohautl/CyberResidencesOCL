@@ -5,3 +5,15 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_anapaula : Resident
+! set G299_anapaula.name:='Anapaula Lapierre'
+! set G299_anapaula.age:=15
+! set G299_anapaula.gender:=#female
+! set G299_anapaula.isSmoker:=true
+! create G299_anapaul : Resident
+! set G299_anapaul.name:='Anapaul Lapierre'
+! set G299_anapaul.age:=26
+! set G299_anapaul.gender:=#male
+! set G299_anapaul.isSmoker:=true
+! insert (G299_anapaula,G299_anapaul) into IsMarriedWith
