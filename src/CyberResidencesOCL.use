@@ -133,8 +133,6 @@ between
 	Discount[*] role discounts
 end
 
-
-
 -------------
 
 -- For association classes use the following syntax
@@ -351,16 +349,17 @@ context Bedroom inv deriveNbOfUnits:
 -- Not Easy. Use 'if ... then ... else ... endif'   and
 -- 'let groupFloors : Set(Integer) = ... in ...'
 
---context Tenant inv derivePaidRate:
+context Tenant inv derivePaidRate:
     -- The total amount paid by a tenant is the sum of rent rates for
     -- all bedrooms rented. If the members of his or her group is
     -- spread over more than one floor, then 20€ of reduction will
     -- automatically be deduced.
 	
-	--let groupFloor : Set(Integer) = self.rentedBedrooms
-	--let listeBedroomsTenant : Set(Bedroom) = self.rentedBedrooms
-	
-	--self.paidRate = self.rentedBedrooms.occupants->sum()
+	--let groupFloor : Set(Integer) = self.rentedBedrooms in rate
+		if (self.rentedBedrooms.floor->forAll(e1,e2|e1=e2 implies true)) then
+			self.paidRate = self.rentedBedrooms.rate->sum() else
+				self.paidRate = self.rentedBedrooms.rate->sum()-20
+		endif
 	
 
 -------------------------------------------------------------------------------
@@ -453,10 +452,11 @@ context Resident inv marriageAntiReflexivity:
 -- Consorts in the same group.
 -- Medium
 
---context Resident inv marriageInSameGroup:
+context Resident inv marriageInSameGroup:
     -- A resident and his or her consort occupies a room of the same
     -- group.
 
+	self.consort->notEmpty implies self.tutors = self.consort.tutors
 	
 	
 -------------------------------------------------------------------------------
@@ -577,17 +577,18 @@ context Bathroom inv sameNumberIfPrivate:
 -- Conditions for granting a discount "Some Bathrooms Out Of Order" (SBOOO).
 -- Not Easy. Use 'one'. Should world with 'xxxPercentage'
 
---context Rent inv sboooConditions:
+context Rent inv sboooConditions:
     -- A discount if given for a bed room if there are "Some Bathrooms
     -- Out Of Order", that is for bedroom with at least one bathroom
     -- out of order, but at least one bathroom still available.  The
     -- label for this type of discount is SBOO. This type of discount
     -- does not apply on economy residences.
 
-	--self.rentedBedrooms.residence.category <> Category::economy
-	--	and self.rentedBedrooms->exists(e:Bedroom|e.bathrooms.isOutOfOrder = true) and
-	--	self.discounts -> exists(e:Discount|e.label = 'SBOO') implies 
+	self.rentedBedrooms.residence.category <> Category::economy
+		and self.rentedBedrooms.bathrooms->exists(e:Bathroom|e.isOutOfOrder = true)
+		and self.discounts -> exists(e:Discount|e.label = 'SBOO') implies 
 	--		self.rentedBedrooms->forAll(e:Bedroom|e->one(isOutOfOrder = true))
+		self.rentedBedrooms.isOutOfOrder=true
 
 -------------------------------------------------------------------------------
 --                               sboooPercentage
@@ -671,9 +672,8 @@ context Resident inv tutorInSameGroup:
 -- Invariant on room numbering.
 -- Medium
 
---context Residence inv uniqueNumberApartForPrivateBathroom:
+context Residence inv uniqueNumberApartForPrivateBathroom:
     -- All rooms have a distinct number, except private bathrooms.
 
-	--self.rooms->forAll(e1,e2 : Room | e1<>e2 implies e1.number <> e2.number) or
-		--self.oclIsKindOf(Bathroom) and 
-		--self.rooms.isOnTheLanding = false 
+	self.rooms->forAll(e1,e2 : Room | e1<>e2 implies e1.number <> e2.number) or
+		self.oclIsKindOf(Bathroom)
