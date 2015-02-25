@@ -5,3 +5,10 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_hubert : Resident
+! set G299_hubert.name:='Hubert Pas Le Majordome'
+! set G299_hubert.age:=15
+! set G299_hubert.gender:=#male
+! set G299_hubert.isSmoker:=false
+! insert (G299_r1_308,G299_hubert) into IsOccupiedBy
