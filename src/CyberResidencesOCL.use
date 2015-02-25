@@ -277,8 +277,9 @@ context Residence inv deriveAvgRate:
     -- The average rate of a residence is the total revenue of the
     -- residence divided by the number of occupants. Tutored residents
     -- do not count in this rule.
-
-	self.avgRate=self.bedrooms().rate->sum()/self.bedrooms().occupants->size()
+	--Set bedrooms() : Set(Bedroom) =
+    --    rooms->select(oclIsKindOf(Bedroom))->oclAsType(Set(Bedroom))
+	self.avgRate=self.bedrooms().rent.rate->sum()/self.bedrooms().occupants->select(e| e.tutors->isEmpty())->size()
 
 -------------------------------------------------------------------------------
 --                                deriveDiscount
@@ -328,7 +329,7 @@ context Residence inv deriveMaxNbOfFreeUnits:
     -- The maximum number of free units is equal to the maximum number
     -- of places in beds of all rooms of the residence.
 
-	self.maxNbOfFreeUnits<=self.bedrooms().nbOfUnits->sum()
+	self.maxNbOfFreeUnits = self.bedrooms().nbOfUnits->sum()
 
 -------------------------------------------------------------------------------
 --                               deriveNbOfUnits
@@ -357,9 +358,9 @@ context Tenant inv derivePaidRate:
     -- automatically be deduced.
 	
 	--let groupFloor : Set(Integer) = self.rentedBedrooms in rate
-		if (self.rentedBedrooms.floor->forAll(e1,e2|e1=e2 implies true)) then
-			self.paidRate = self.rentedBedrooms.rate->sum() else
-				self.paidRate = self.rentedBedrooms.rate->sum()-20
+		if (self.rentedBedrooms->forAll(e1,e2 : Bedroom |e1.floor=e2.floor ) ) then
+			self.paidRate = self.rent.rate->sum() else
+				self.paidRate = self.rent.rate->sum()-20
 		endif
 	
 
