@@ -600,8 +600,16 @@ context Discount inv sboooPercentage:
     -- In premium residences, SBOO discounts are equal to 25%. For
     -- standard category the discount is of 10%.
 
-	if self.label = 'SBOO' and self.rent.rentedBedrooms.residence.category = 
-		Category::premium then self.percentage = 25 else self.percentage = 10 endif
+	if self.label = 'SBOO' then 
+		if self.rent.rentedBedrooms.residence.category = 
+		Category::premium then self.percentage = 25 else 
+			if self.rent.rentedBedrooms.residence.category = 
+			Category::standard then self.percentage = 10 else
+			true endif
+		endif
+	else true endif
+		
+		
 
 -------------------------------------------------------------------------------
 --                             smokingPremiumPolicy
