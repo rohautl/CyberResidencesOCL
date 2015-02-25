@@ -57,7 +57,7 @@ end
 
 class Tenant < Resident
 attributes
-	PaidRate : Real -- @derived
+	paidRate : Real -- @derived
 end
 
 class Discount
@@ -109,14 +109,14 @@ association HasDiscounts between
 	Rent[1] role rent
 end
 
-association rentedBedrooms between
+association RentedTenant between
 	Tenant[0..1] role tenant
 	Bedroom[1..*] role rentedBedrooms
 end
 
 association IsOccupiedBy between
-	Resident[*] role occupants
 	Bedroom[1] role occupiedRoom
+	Resident[*] role occupants
 end
 
 association IsTutoredBy between
@@ -325,7 +325,7 @@ context Bedroom inv deriveNbOfUnits:
 -- context Tenant inv derivePaidRate:
     -- The total amount paid by a tenant is the sum of rent rates for
     -- all bedrooms rented. If the members of his or her group is
-    -- spread over more than one floor, then 20€ of reduction will
+    -- spread over more than one floor, then 20â‚¬ of reduction will
     -- automatically be deduced.
 
 
