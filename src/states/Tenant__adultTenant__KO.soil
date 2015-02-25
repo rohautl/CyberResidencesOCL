@@ -5,3 +5,10 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_jean : Tenant
+! set G299_jean.name:='Jean Prevert'
+! set G299_jean.age:=15
+! set G299_jean.gender:=male
+! set G299_jean.isSmoker:=false
+! set G299_jean.paidRate:=0.5
