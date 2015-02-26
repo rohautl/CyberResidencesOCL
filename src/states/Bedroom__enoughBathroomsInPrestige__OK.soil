@@ -5,3 +5,94 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G204_r2 : Residence
+ ! set G204_r2.name := 'ouest'
+ ! set G204_r2.floorMin := 1
+ ! set G204_r2.floorMax := 3
+ ! set G204_r2.category := #prestige
+ ! set G204_r2.maxNbOfFreeUnits := 6
+ ! set G204_r2.avgRate := 50
+ 
+! create G204_r2_204 : Bedroom
+ ! set G204_r2_204.number := 204
+ ! set G204_r2_204.floor := 2
+ ! set G204_r2_204.isOutOfOrder := false
+ ! set G204_r2_204.nbOfSingleBeds := 0
+ ! set G204_r2_204.nbOfDoubleBeds := 2
+ ! set G204_r2_204.rate := 50
+ ! set G204_r2_204.isNonSmoking := true
+ ! set G204_r2_204.nbOfUnits := 4
+! create G204_r2_105 : Bedroom
+ ! set G204_r2_105.number := 105
+ ! set G204_r2_105.floor := 1
+ ! set G204_r2_105.isOutOfOrder := false
+ ! set G204_r2_105.nbOfSingleBeds := 2
+ ! set G204_r2_105.nbOfDoubleBeds := 0
+ ! set G204_r2_105.rate := 0
+ ! set G204_r2_105.isNonSmoking := true
+ ! set G204_r2_105.nbOfUnits := 2
+ 
+! create G204_r2_308 : Bathroom
+ ! set G204_r2_308.number := 308
+ ! set G204_r2_308.floor := 3
+ ! set G204_r2_308.isOutOfOrder := false
+ ! set G204_r2_308.isOnTheLanding := true
+! create G204_r2_204b1 : Bathroom
+ ! set G204_r2_204b1.number := 204
+ ! set G204_r2_204b1.floor := 2
+ ! set G204_r2_204b1.isOutOfOrder := false
+ ! set G204_r2_204b1.isOnTheLanding := false
+ ! create G204_r2_204b2 : Bathroom
+ ! set G204_r2_204b2.number := 204
+ ! set G204_r2_204b2.floor := 2
+ ! set G204_r2_204b2.isOutOfOrder := false
+ ! set G204_r2_204b2.isOnTheLanding := false
+
+ ! create G204_r2_105b1 : Bathroom
+ ! set G204_r2_105b1.number := 105
+ ! set G204_r2_105b1.floor := 1
+ ! set G204_r2_105b1.isOutOfOrder := false
+ ! set G204_r2_105b1.isOnTheLanding := false
+! create G204_r2_105b2 : Bathroom
+ ! set G204_r2_105b2.number := 105
+ ! set G204_r2_105b2.floor := 1
+ ! set G204_r2_105b2.isOutOfOrder := false
+ ! set G204_r2_105b2.isOnTheLanding := false
+! create G204_r2_105b3 : Bathroom
+ ! set G204_r2_105b3.number := 105
+ ! set G204_r2_105b3.floor := 1
+ ! set G204_r2_105b3.isOutOfOrder := false
+ ! set G204_r2_105b3.isOnTheLanding := false
+ 
+ 
+ ! create G204_franck : Tenant
+ ! set G204_franck.name := 'Franck Elro'
+ ! set G204_franck.age := 27
+ ! set G204_franck.gender := #male
+ ! set G204_franck.isSmoker := false
+ ! set G204_franck.paidRate := 50
+ 
+ ! insert (G204_r2,G204_r2_204) into ContainsRooms
+ ! insert (G204_r2,G204_r2_308) into ContainsRooms
+ ! insert (G204_r2,G204_r2_204b1) into ContainsRooms
+ ! insert (G204_r2,G204_r2_204b2) into ContainsRooms
+ 
+ ! insert (G204_r2,G204_r2_105) into ContainsRooms
+ ! insert (G204_r2,G204_r2_105b1) into ContainsRooms
+ ! insert (G204_r2,G204_r2_105b2) into ContainsRooms
+ ! insert (G204_r2,G204_r2_105b3) into ContainsRooms
+ 
+ ! insert (G204_r2_204b1,G204_r2_204) into IsInBedroom
+ ! insert (G204_r2_204b2,G204_r2_204) into IsInBedroom
+ 
+  ! insert (G204_r2_105b1,G204_r2_105) into IsInBedroom
+  ! insert (G204_r2_105b2,G204_r2_105) into IsInBedroom
+  ! insert (G204_r2_105b3,G204_r2_105) into IsInBedroom
+  
+  ! insert (G204_r2_204,G204_franck) into occupiedRoom
+  
+  ! create G204_rent3 : Rent between (G204_r2_204,G204_franck)
+ ! set G204_rent3.discount := 0
+ ! set G204_rent3.rate := 50
+ 

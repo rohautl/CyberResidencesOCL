@@ -5,3 +5,37 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G204_r2 : Residence
+ ! set G204_r2.name := 'ouest'
+ ! set G204_r2.floorMin := 1
+ ! set G204_r2.floorMax := 3
+ ! set G204_r2.category := #economy
+ ! set G204_r2.maxNbOfFreeUnits := 3
+ ! set G204_r2.avgRate := 0
+ 
+! create G204_r2_204 : Bedroom
+ ! set G204_r2_204.number := 204
+ ! set G204_r2_204.floor := 2
+ ! set G204_r2_204.isOutOfOrder := false
+ ! set G204_r2_204.nbOfSingleBeds := 1
+ ! set G204_r2_204.nbOfDoubleBeds := 1
+ ! set G204_r2_204.rate := 50
+ ! set G204_r2_204.isNonSmoking := true
+ ! set G204_r2_204.nbOfUnits := 3
+! create G204_r2_308 : Bathroom
+ ! set G204_r2_308.number := 308
+ ! set G204_r2_308.floor := 3
+ ! set G204_r2_308.isOutOfOrder := false
+ ! set G204_r2_308.isOnTheLanding := true
+! create G204_r2_204b1 : Bathroom
+ ! set G204_r2_204b1.number := 204
+ ! set G204_r2_204b1.floor := 2
+ ! set G204_r2_204b1.isOutOfOrder := false
+ ! set G204_r2_204b1.isOnTheLanding := false
+ 
+ ! insert (G204_r2,G204_r2_204) into ContainsRooms
+ ! insert (G204_r2,G204_r2_308) into ContainsRooms
+ ! insert (G204_r2,G204_r2_204b1) into ContainsRooms
+
+ ! insert (G204_r2_204b1,G204_r2_204) into IsInBedroom

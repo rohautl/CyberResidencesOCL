@@ -217,7 +217,7 @@ context Residence inv allPrestigeBathrooms:
 context Bedroom inv atLeastABed:
     -- Bedrooms that are not out of order must have at least one bed.
 
-	not isOutOfOrder implies nbOfSingleBeds > 0 or nbOfDoubleBeds > 0	
+	self.isOutOfOrder = false implies (self.nbOfSingleBeds > 0 or self.nbOfDoubleBeds > 0)	
 	
 -------------------------------------------------------------------------------
 --                               atLeastOneAdult
@@ -279,8 +279,9 @@ context Residence inv deriveAvgRate:
     -- do not count in this rule.
 	--Set bedrooms() : Set(Bedroom) =
     --    rooms->select(oclIsKindOf(Bedroom))->oclAsType(Set(Bedroom))
-	self.avgRate=self.bedrooms().rent.rate->sum()/self.bedrooms().occupants->select(e| e.tutors->isEmpty())->size()
-
+	if self.bedrooms().occupants->notEmpty() then 
+		self.avgRate=self.bedrooms().rent.rate->sum()/self.bedrooms().occupants->select(e| e.tutors->isEmpty())->size()
+	else self.avgRate= 0 endif
 -------------------------------------------------------------------------------
 --                                deriveDiscount
 -------------------------------------------------------------------------------
