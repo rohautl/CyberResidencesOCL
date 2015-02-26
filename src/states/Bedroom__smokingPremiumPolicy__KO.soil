@@ -5,3 +5,31 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_r6 : Residence
+! set G299_r6.name:='pasest'
+! set G299_r6.floorMin:=1
+! set G299_r6.floorMax:=3
+! set G299_r6.category:=#premium
+! set G299_r6.maxNbOfFreeUnits:=1
+! set G299_r6.avgRate:=2
+
+! create G299_r6_102 : Bedroom
+! set G299_r6_102.number:=102
+! set G299_r6_102.floor:=1
+! set G299_r6_102.isOutOfOrder:=false
+! set G299_r6_102.nbOfSingleBeds:=2
+! set G299_r6_102.nbOfDoubleBeds:=0
+! set G299_r6_102.rate:=20
+! set G299_r6_102.isNonSmoking:=false
+! set G299_r6_102.nbOfUnits:=1
+
+! create G299_nonfumeurpremiumdeux : Resident
+! set G299_nonfumeurpremiumdeux.name:='nonfumeurpremiumdeux'
+! set G299_nonfumeurpremiumdeux.age:=20
+! set G299_nonfumeurpremiumdeux.gender:=#male
+! set G299_nonfumeurpremiumdeux.isSmoker:=false
+
+! insert (G299_r6,G299_r6_102) into ContainsRooms
+
+! insert (G299_r6_102,G299_nonfumeurpremiumdeux) into IsOccupiedBy
