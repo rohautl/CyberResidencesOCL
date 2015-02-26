@@ -14,24 +14,23 @@
 ! set G299_r5.maxNbOfFreeUnits:=1
 ! set G299_r5.avgRate:=2
 
-! create G299_bathr5_105 : Bathroom
-! set G299_bathr5_105.number:=105
-! set G299_bathr5_105.floor:=1
-! set G299_bathr5_105.isOutOfOrder:=true
-! set G299_bathr5_105.isOnTheLanding:=false
 
+! create G299_bathr5_106 : Bathroom
+! set G299_bathr5_106.number:=106
+! set G299_bathr5_106.floor:=1
+! set G299_bathr5_106.isOutOfOrder:=true
+! set G299_bathr5_106.isOnTheLanding:=false
 
-! create G299_r5_105 : Bedroom
-! set G299_r5_105.number:=105
-! set G299_r5_105.floor:=1
-! set G299_r5_105.isOutOfOrder:=false
-! set G299_r5_105.nbOfSingleBeds:=1
-! set G299_r5_105.nbOfDoubleBeds:=0
-! set G299_r5_105.rate:=10
-! set G299_r5_105.isNonSmoking:=false
-! set G299_r5_105.nbOfUnits:=1
+! create G299_r5_106 : Bedroom
+! set G299_r5_106.number:=106
+! set G299_r5_106.floor:=1
+! set G299_r5_106.isOutOfOrder:=true
+! set G299_r5_106.nbOfSingleBeds:=1
+! set G299_r5_106.nbOfDoubleBeds:=0
+! set G299_r5_106.rate:=10
+! set G299_r5_106.isNonSmoking:=false
+! set G299_r5_106.nbOfUnits:=1
 
-
-! insert (G299_r5,G299_r5_105) into ContainsRooms
-! insert (G299_r7,G299_bathr5_105) into ContainsRooms
-! insert (G299_bathr5_105,G299_r5_105) into IsInBedroom
+! insert (G299_r5,G299_r5_106) into ContainsRooms
+! insert (G299_r5,G299_bathr5_106) into ContainsRooms
+! insert (G299_bathr5_106,G299_r5_106) into IsInBedroom
