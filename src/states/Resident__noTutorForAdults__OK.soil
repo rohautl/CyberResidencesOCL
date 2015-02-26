@@ -5,3 +5,36 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+! create G299_r1 : Residence
+! set G299_r1.name:='ouest'
+! set G299_r1.floorMin:=1
+! set G299_r1.floorMax:=1
+! set G299_r1.category:=#economy
+! set G299_r1.maxNbOfFreeUnits:=1
+! set G299_r1.avgRate:=2
+! create G299_bath1 : Bathroom
+! set G299_bath1.number:=2
+! set G299_bath1.floor:=1
+! set G299_bath1.isOutOfOrder:=false
+! set G299_bath1.isOnTheLanding:=true
+! create G299_bed1 : Bedroom
+! set G299_bed1.number:=1
+! set G299_bed1.floor:=1
+! set G299_bed1.isOutOfOrder:=false
+! set G299_bed1.nbOfSingleBeds:=1
+! set G299_bed1.nbOfDoubleBeds:=0
+! set G299_bed1.rate:=0
+! set G299_bed1.isNonSmoking:=false
+! set G299_bed1.nbOfUnits:=1
+! create G299_paul : Resident
+! set G299_paul.name:='Paul Bismut'
+! set G299_paul.age:=26
+! set G299_paul.gender:=#male
+! set G299_paul.isSmoker:=false
+! create G299_nico : Resident
+! set G299_nico.name:='Nico'
+! set G299_nico.age:=26
+! set G299_nico.gender:=#male
+! set G299_nico.isSmoker:=false
+! insert (G299_r1,G299_bed1) into ContainsRooms
+! insert (G299_r1,G299_bath1) into ContainsRooms
