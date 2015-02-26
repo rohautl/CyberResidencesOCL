@@ -325,7 +325,7 @@ context Bedroom inv deriveNbOfUnits:
 -- context Tenant inv derivePaidRate:
     -- The total amount paid by a tenant is the sum of rent rates for
     -- all bedrooms rented. If the members of his or her group is
-    -- spread over more than one floor, then 20â‚¬ of reduction will
+    -- spread over more than one floor, then 20Ã¢â€šÂ¬ of reduction will
     -- automatically be deduced.
 
 
@@ -613,7 +613,6 @@ context Resident inv tutorAdult:
     -- resident. In other words they are all in the same group of
     -- rooms.
 
-
 -------------------------------------------------------------------------------
 --                     uniqueNumberApartForPrivateBathroom
 -------------------------------------------------------------------------------
@@ -621,6 +620,5 @@ context Resident inv tutorAdult:
 -- Medium
 
 context Residence inv uniqueNumberApartForPrivateBathroom:
-	self.bedrooms()->isUnique(number) and self.bathrooms()->select(r : Bathroom | r.isOnTheLanding)->isUnique(number)
+self.rooms->forAll(e1,e2 : Room | (e1<>e2 implies e1.number <> e2.number) or e1.oclIsKindOf(Bathroom) or e2.oclIsKindOf(Bathroom) )
     -- All rooms have a distinct number, except private bathrooms.
-
