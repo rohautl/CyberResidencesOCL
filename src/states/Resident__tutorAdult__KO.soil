@@ -5,3 +5,17 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_tototuteurr : Resident
+! set G299_tototuteurr.name:='tototuteurr'
+! set G299_tototuteurr.age:=15
+! set G299_tototuteurr.gender:=#male
+! set G299_tototuteurr.isSmoker:=false
+
+! create G299_tototutoree : Resident
+! set G299_tototutoree.name:='tototutoree'
+! set G299_tototutoree.age:=15
+! set G299_tototutoree.gender:=#male
+! set G299_tototutoree.isSmoker:=false
+
+! insert (G299_tototutoree,G299_tototuteurr) into IsTutoredBy
