@@ -19,3 +19,5 @@
 ! set G299_tototutore.isSmoker:=false
 
 ! insert (G299_tototutore,G299_tototuteur) into IsTutoredBy
+! insert (G299_r1_306,G299_tototuteur) into IsOccupiedBy
+! insert (G299_r1_306,G299_tototutore) into IsOccupiedBy
