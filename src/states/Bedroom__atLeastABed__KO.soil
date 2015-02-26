@@ -15,3 +15,12 @@
 ! set G299_r1_308.rate:=0
 ! set G299_r1_308.isNonSmoking:=false
 ! set G299_r1_308.nbOfUnits:=0
+
+! create G299_r1 : Residence
+! set G299_r1.name:='ouest'
+! set G299_r1.floorMin:=1
+! set G299_r1.floorMax:=3
+! set G299_r1.category:=#economy
+! set G299_r1.maxNbOfFreeUnits:=10
+! set G299_r1.avgRate:=2
+! insert (G299_r1,G299_r1_308) into ContainsRooms
