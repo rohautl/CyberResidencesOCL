@@ -83,14 +83,14 @@ attributes
     avgRate : Real             -- @derived
 operations
     -- Set of bedrooms of the residence.
-    bedrooms() : Set(Bedroom) =
-        rooms->select(oclIsKindOf(Bedroom))->oclAsType(Set(Bedroom))
+    bedrooms() : Set(Room) =
+        rooms->select(oclIsKindOf(Bedroom))
     -- Set of useful bedrooms.
-    usefulBedrooms() : Set(Bedroom) =
-        bedrooms()->select(not isOutOfOrder)
+    usefulBedrooms() : Set(Room) =
+        bedrooms()->select(r : Room | r.oclIsKindOf(Bathroom) and not r.oclAsType(Bedroom).isOutOfOrder)
     -- Set of residence bathrooms
-    bathrooms() : Set(Bathroom) =
-        rooms->select(oclIsKindOf(Bathroom))->oclAsType(Set(Bathroom))
+    bathrooms() : Set(Room) =
+        rooms->select(r : Room | r.oclIsKindOf(Bathroom))
 end
 
 
@@ -298,7 +298,7 @@ context Bathroom inv deriveIsOnTheLanding:
 -- Easy
 
 context Residence inv deriveMaxNbOfFreeUnits:
-	self.maxNbOfFreeUnits = self.bedrooms()->select(nbOfSingleBeds > 0)->size() + (self.bedrooms()->select(nbOfDoubleBeds > 0)->size() * 2)
+	self.maxNbOfFreeUnits = self.bedrooms()->select(r : Room | r.oclIsKindOf(Bedroom) and r.oclAsType(Bedroom).nbOfSingleBeds > 0)->size() + (self.bedrooms()->select(r : Room | r.oclIsKindOf(Bedroom) and r.oclAsType(Bedroom).nbOfDoubleBeds > 0)->size() * 2)
     -- The maximum number of free units is equal to the maximum number
     -- of places in beds of all rooms of the residence.
 
