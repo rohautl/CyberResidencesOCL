@@ -5,3 +5,15 @@
 
 -- open -q <BASE>.soil
 -- here some mutation code
+
+! create G299_r5_202 : Bedroom
+! set G299_r5_202.number:=202
+! set G299_r5_202.floor:=2
+! set G299_r5_202.isOutOfOrder:=true
+! set G299_r5_202.nbOfSingleBeds:=1
+! set G299_r5_202.nbOfDoubleBeds:=0
+! set G299_r5_202.rate:=10
+! set G299_r5_202.isNonSmoking:=false
+! set G299_r5_202.nbOfUnits:=1
+
+! insert (G299_r5,G299_r5_202) into ContainsRooms
