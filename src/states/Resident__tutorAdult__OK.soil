@@ -23,6 +23,7 @@
 ! set G299_r1_306.rate:=20
 ! set G299_r1_306.isNonSmoking:=false
 ! set G299_r1_306.nbOfUnits:=12
+! insert (G299_r1,G299_r1_306) into ContainsRooms
 
 ! create G299_tototuteur : Resident
 ! set G299_tototuteur.name:='tototuteur'
