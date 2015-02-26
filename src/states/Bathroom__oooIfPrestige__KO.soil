@@ -33,5 +33,5 @@
 
 
 ! insert (G299_r5,G299_r5_105) into ContainsRooms
-! insert (G299_r7,G299_bathr5_105) into ContainsRooms
+! insert (G299_r5,G299_bathr5_105) into ContainsRooms
 ! insert (G299_bathr5_105,G299_r5_105) into IsInBedroom
